@@ -3,15 +3,12 @@ function buildMetadata(sample) {
   d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
 
     // get the metadata field
-    let metaData = data.metadata
-
-    //console.log("meta")
-    //console.log(metaData)
+    let metaDatas = data.metadata
 
     // Filter the metadata for the object with the desired sample number
-    let sampleMeta = metaData[sample.id]
+    let sampleIndex = metaDatas.findIndex(x => x.id == sample)
 
-    //console.log(sample.id)
+    let currentMeta = metaDatas[sampleIndex]
 
     // Use d3 to select the panel with id of `#sample-metadata`
     let metaPanel = d3.select("#sample-metadata")
@@ -19,9 +16,12 @@ function buildMetadata(sample) {
     // Use `.html("") to clear any existing metadata
     metaPanel.html("")
 
+    console.log(currentMeta)
     // Inside a loop, you will need to use d3 to append new
     // tags for each key-value in the filtered metadata.
-
+    for (const [key, value] of Object.entries(currentMeta)){
+      metaPanel.append("div").text(`${key.toUpperCase()} : ${value}`)
+    }
   });
 }
 
@@ -34,7 +34,6 @@ function buildCharts(sample) {
 
     // Filter the samples for the object with the desired sample number
     let sampleIndex = samples.findIndex(x => x.id == sample)
-    //console.log(samples[sampleIndex])
     let currentSample = samples[sampleIndex]
 
     // Get the otu_ids, otu_labels, and sample_values
@@ -67,7 +66,6 @@ function buildCharts(sample) {
     Plotly.newPlot("bubble", bubbleData, bubbleLayout)
 
     // For the Bar Chart, map the otu_ids to a list of strings for your yticks
-    //let yTicks = otu_ids
     let otuTicks = []
 
     for (let i=0; i < 10; i++) {
@@ -85,8 +83,6 @@ function buildCharts(sample) {
 
     let otu_labelsMod = otu_labels.slice(0,10)
     otu_labelsMod = otu_labelsMod.reverse()
-
-    
 
     let trace2 = {
       x: sample_valuesMod,
@@ -107,9 +103,7 @@ function buildCharts(sample) {
       }
     }
 
-
     // Render the Bar Chart
-
     Plotly.newPlot("bar", data2, barLayout);
   });
 }
@@ -137,14 +131,15 @@ function init() {
     // Build charts and metadata panel with the first sample
     
     buildCharts(firstSample.id)
-    buildMetadata(firstSample)
+    buildMetadata(firstSample.id)
   });
 }
 
 // Function for event listener
 function optionChanged(newSample) {
   // Build charts and metadata panel each time a new sample is selected
-
+  buildCharts(newSample)
+  buildMetadata(newSample)
 }
 
 // Initialize the dashboard
