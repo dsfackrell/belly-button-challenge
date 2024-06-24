@@ -15,8 +15,6 @@ function buildMetadata(sample) {
 
     // Use `.html("") to clear any existing metadata
     metaPanel.html("")
-
-    console.log(currentMeta)
     // Inside a loop, you will need to use d3 to append new
     // tags for each key-value in the filtered metadata.
     for (const [key, value] of Object.entries(currentMeta)){
@@ -129,7 +127,6 @@ function init() {
     firstSample = data.samples[0]
 
     // Build charts and metadata panel with the first sample
-    
     buildCharts(firstSample.id)
     buildMetadata(firstSample.id)
   });
